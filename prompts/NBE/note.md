@@ -1,0 +1,12 @@
+- NBE sẽ **không rewrite toàn bộ**; giữ legacy code hiện tại và thay đổi theo hướng incremental.
+- Source code được tổ chức theo **Business Domain**, không theo Scrum Team.
+- **Domain ≠ Angular NgModule**; `NgModule` chỉ được xem là legacy technical implementation.
+- Mỗi Domain có thể chứa nhiều **Feature**; code mới trong Feature sử dụng **Standalone**.
+- Scrum Team ownership được quản lý **tách biệt khỏi source structure**, để ownership thay đổi không cần move/copy code.
+- Mỗi Scrum Team có thể có **development routing/scope riêng**, chỉ compile những domain/feature team cần làm việc.
+- Có thể sử dụng Angular `fileReplacements` để chọn routing configuration tương ứng khi `ng serve`.
+- Trọng tâm architecture là **giảm dependency/compile graph**, vì đây là nguyên nhân quan trọng của vấn đề memory và performance khi development.
+- Phân tích và loại bỏ các **dependency hub** lớn, đặc biệt `SharedModule`; tránh việc một feature import một aggregate module rồi kéo theo cả legacy graph.
+- Không chỉ xử lý `SharedModule`; cần tìm các dependency hub/cross-domain dependency khác và ưu tiên xử lý những nơi có impact lớn.
+- **Standalone là phương tiện để tạo dependency rõ ràng**, không phải mục tiêu phải migrate 100% legacy code.
+- Target cuối cùng: **Domain boundaries rõ ràng + dependency graph nhỏ/predictable + development scope theo team + new code Standalone + legacy được kiểm soát và migrate dần khi có giá trị.**
