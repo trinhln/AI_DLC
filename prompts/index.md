@@ -61,3 +61,20 @@ src/
 
 Mong muốn:
 chúng ta cần lựa chọn và tích hợp angular skills cho AI làm việc
+
+code của app đang sai. hãy tổ chức lại nhé
+Đầu tiên, các menu con của menu tài chính phải là menu cùng cấp với các menu như Bảng điều khiển, Quản lý tài khoản chứ không phải con của tài chính
+
+Bỏ qua bước build để test.
+Chỉ cần check lại code có lỗi ts hay không thôi.
+
+Hãy sử dụng icon tương ứng với tính năng của các feature chứ?
+
+Bây giờ hãy tổ chức lại router và structure code của hệ thống.
+code trong src/app/features/finance đang bị tổ chức sai.
+Hãy tổ chức lại đúng theo từng feature và routing của từng feature.
+không cần giữ nguyên url là url con của /finance nhé
+
+- Step 1: hãy phân tích api/app/modules/api/controllers xem api sẽ cần các quyền nào.
+- Step 2: tạo group supper_admin với toàn bộ quyền trên
+- Step 3: tạo tài khoản với email: trinhln.it@gmail.com mật khẩu: 123456 được gán quyền supper_admin để đăng nhập được vào hệ thống
