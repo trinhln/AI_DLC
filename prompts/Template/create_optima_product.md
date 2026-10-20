@@ -1,247 +1,337 @@
-# Nhiệm vụ: Thiết kế Skill tạo sản phẩm mới cho WealthNet (WN)
+# Nhiệm vụ: Thiết kế Skill tạo và chuẩn hóa sản phẩm cho WealthNet (WN)
 
 ## 1. Vai trò
 
-Bạn là **WN Product Replication Engineer** — kỹ sư phần mềm cấp cao chuyên phân tích, tái sử dụng và phát triển sản phẩm mới dựa trên sản phẩm đã tồn tại trong hệ thống WealthNet (WN).
+Bạn là **WN Product Replication Engineer** — kỹ sư phần mềm cấp cao chuyên phân tích, tái sử dụng, phát triển và chuẩn hóa các sản phẩm trong hệ thống WealthNet (WN).
 
-WealthNet có nhiều sản phẩm với cấu trúc code, cách tổ chức và luồng xử lý tương đối giống nhau. Các sản phẩm được phân biệt chủ yếu thông qua Product Code.
+WealthNet có nhiều sản phẩm với cấu trúc code và luồng xử lý tương đối giống nhau. Các sản phẩm được phân biệt chủ yếu thông qua Product Code.
 
-Nhiệm vụ của bạn là thiết kế một Kiro Skill giúp tự động hóa quy trình tạo sản phẩm mới dựa trên một sản phẩm nguồn đã được người dùng chỉ định.
+Trong hệ thống hiện tại:
 
-Ở giai đoạn này, chỉ thiết kế skill và tài liệu liên quan. Không thực hiện tạo sản phẩm mới, không sửa code nghiệp vụ hiện có và không tự ý refactor repository.
+- Các sản phẩm có nhiều pattern tổ chức code và luồng xử lý tương đồng.
+- Một số sản phẩm vẫn sử dụng chung HTML giữa các component hoặc giữa nhiều sản phẩm.
+- Sản phẩm DC đã được tổ chức theo hướng tách biệt toàn bộ component riêng rẽ.
+
+Mục tiêu là thiết kế một Kiro Skill có thể tạo sản phẩm mới dựa trên sản phẩm nguồn được chỉ định hoặc chuẩn hóa một sản phẩm đã tồn tại, đồng thời áp dụng cách tách biệt component theo pattern thực tế của DC.
+
+Ở giai đoạn này, chỉ khảo sát repository và thiết kế skill. Không triển khai sản phẩm cụ thể, không refactor code nghiệp vụ và không tự ý sửa đổi code hiện hữu.
 
 ## 2. Mục tiêu của Skill
 
-Skill phải hỗ trợ quy trình:
+Skill phải hỗ trợ hai trường hợp chính:
 
-- Người dùng cung cấp Product Code nguồn (Source Product Code).
-- Người dùng cung cấp Product Code đích (Target Product Code).
-- Kiro khảo sát repository để hiểu cách sản phẩm nguồn được tổ chức và triển khai.
-- Kiro xác định đầy đủ các vị trí liên quan đến Product Code, bao gồm code, cấu hình, đăng ký, routing, dependency, metadata, script và các cơ chế tích hợp khác nếu có.
-- Kiro xây dựng kế hoạch tạo sản phẩm mới dựa trên sản phẩm nguồn.
-- Kiro triển khai sản phẩm đích theo đúng pattern hiện hữu.
-- Kiro kiểm tra tính đầy đủ, nhất quán và ảnh hưởng đến các sản phẩm khác.
+### Trường hợp A: Target Product Code chưa tồn tại
 
-Không giả định trước cấu trúc repository, ngôn ngữ lập trình, framework, quy ước đặt tên hoặc vị trí lưu Product Code. Mọi kết luận phải dựa trên bằng chứng từ repository thực tế.
+Tạo sản phẩm mới dựa trên Source Product Code do người dùng chỉ định.
 
-## 3. Nguyên tắc thiết kế
+Yêu cầu:
 
-### 3.1. Repository là nguồn thông tin chính
+- Kế thừa luồng nghiệp vụ, cách vận hành và các quy ước cần thiết từ sản phẩm nguồn.
+- Khảo sát sản phẩm DC để xác định pattern tách biệt component.
+- Áp dụng pattern tách biệt component của DC cho sản phẩm mới.
+- Không tiếp tục tạo các component dùng chung HTML giữa sản phẩm đích và các sản phẩm khác trong phạm vi cần tách biệt.
+- Tái sử dụng các service, thư viện hoặc thành phần dùng chung thực sự cần thiết theo kiến trúc hiện hữu.
+- Đăng ký và tích hợp sản phẩm mới theo đúng quy ước của WN.
 
-Trước khi đề xuất cách triển khai, hãy khảo sát repository để xác định:
+### Trường hợp B: Target Product Code đã tồn tại
 
-- Cấu trúc thư mục và các khu vực chứa code sản phẩm.
-- Cách tổ chức một sản phẩm hoàn chỉnh.
-- Các điểm khởi tạo, đăng ký và tích hợp sản phẩm.
-- Các quy ước đặt tên và quy tắc phụ thuộc giữa các thành phần.
-- Cách quản lý Product Code và các biến thể của nó.
-- Cách kiểm thử, build, validate và chạy ứng dụng.
+Chuẩn hóa sản phẩm hiện hữu để các component được tách biệt riêng rẽ theo pattern của DC.
 
-Không tự tạo ra quy ước mới khi repository đã có quy ước tương ứng.
+Yêu cầu:
 
-### 3.2. Không thay thế Product Code một cách máy móc
+- Giữ nguyên luồng nghiệp vụ hiện tại của sản phẩm đích.
+- Giữ nguyên các hành vi hiện có, trừ những thay đổi được người dùng yêu cầu rõ ràng.
+- Khảo sát các component đang dùng chung HTML và xác định ranh giới cần tách biệt.
+- Tách các component thuộc phạm vi cần chuẩn hóa thành các component riêng cho sản phẩm đích.
+- Tham khảo DC về cách tổ chức và tách biệt component, không sao chép mù quáng toàn bộ code của DC.
+- Không thay thế luồng nghiệp vụ của sản phẩm đích bằng luồng nghiệp vụ của sản phẩm nguồn.
+- Không làm thay đổi hành vi của các sản phẩm khác khi tách component.
+- Không ghi đè hoặc tạo lại sản phẩm hiện hữu như thể đây là sản phẩm mới.
 
-Không được coi mọi chuỗi trùng với Source Product Code đều cần thay bằng Target Product Code.
+Đây là một nhiệm vụ refactor có kiểm soát. Phải phân biệt rõ việc kế thừa luồng nghiệp vụ và việc chuẩn hóa cấu trúc component.
 
-Phải phân loại từng vị trí tìm được, chẳng hạn:
+## 3. Quy tắc lựa chọn nguồn tham chiếu
 
-- Định danh thực sự của sản phẩm.
-- Tên class, file, thư mục hoặc namespace liên quan đến sản phẩm.
-- Khóa cấu hình, registry hoặc metadata.
-- Tham chiếu đến sản phẩm nguồn từ các thành phần khác.
-- Test, mock, fixture, tài liệu hoặc dữ liệu mẫu.
-- Thành phần dùng chung không được sao chép hoặc sửa đổi.
+Skill phải phân biệt ba nguồn thông tin sau:
 
-Chỉ thay đổi các vị trí có căn cứ rõ ràng rằng chúng cần được tạo mới hoặc cập nhật cho sản phẩm đích.
+### 3.1. Sản phẩm nguồn — Source Product Code
 
-### 3.3. Bảo toàn sản phẩm hiện hữu
+Được người dùng chỉ định và dùng làm căn cứ để tìm hiểu:
 
-- Không sửa logic của sản phẩm nguồn chỉ để phục vụ việc tạo sản phẩm đích, trừ khi người dùng phê duyệt riêng.
-- Không refactor code dùng chung ngoài phạm vi yêu cầu.
-- Không tạo bản sao của các thành phần vốn được thiết kế để dùng chung.
-- Không xóa hoặc ghi đè sản phẩm đã tồn tại.
-- Nếu Target Product Code đã tồn tại, phải dừng trước khi triển khai và thông báo cho người dùng lựa chọn cách xử lý.
-- Nếu phát hiện thay đổi có nguy cơ ảnh hưởng các sản phẩm khác, phải nêu rõ rủi ro và phương án xử lý.
+- Luồng nghiệp vụ và cách vận hành.
+- Cấu trúc code hiện tại.
+- Các dependency liên quan.
+- Quy ước tổ chức và tích hợp sản phẩm.
+- Các thành phần có thể tái sử dụng.
 
-## 4. Workflow bắt buộc của Skill
+### 3.2. Sản phẩm DC — Component Isolation Reference
 
-Thiết kế skill theo các bước dưới đây. Có thể chia thành nhiều giai đoạn hoặc tài liệu hướng dẫn con nếu điều đó phù hợp với cơ chế Kiro Skill hiện hành.
+DC là nguồn tham chiếu cho cách tách biệt component.
 
-### Bước 1: Tiếp nhận và xác thực đầu vào
+Cần khảo sát code thực tế của DC để xác định:
+
+- Cách tổ chức component riêng cho từng sản phẩm.
+- Cách tổ chức HTML, template, style và logic component nếu có.
+- Cách đặt tên file, class và thư mục.
+- Cách quản lý dependency giữa các component.
+- Cách đăng ký và tích hợp component.
+- Cách tránh phụ thuộc vào HTML dùng chung giữa các sản phẩm.
+- Các quy ước liên quan khác được chứng minh từ repository.
+
+Không mặc định rằng mọi thành phần của DC đều phù hợp để sao chép. Chỉ áp dụng những pattern thực sự liên quan đến yêu cầu tách biệt component.
+
+### 3.3. Sản phẩm đích — Target Product Code
+
+Sản phẩm đích là đối tượng cuối cùng cần tạo mới hoặc chuẩn hóa.
+
+Khi sản phẩm đích đã tồn tại, trạng thái code và luồng nghiệp vụ hiện tại của chính sản phẩm đích là căn cứ để bảo toàn hành vi.
+
+Không được mặc định Source Product Code luôn có quyền thay thế cấu trúc hoặc luồng nghiệp vụ hiện tại của Target Product Code.
+
+Nếu có mâu thuẫn giữa các nguồn tham chiếu, phải phân tích và báo cáo trước khi quyết định thay đổi.
+
+## 4. Nguyên tắc thiết kế
+
+### 4.1. Repository là nguồn thông tin chính
+
+Không giả định trước vị trí Product Code, cấu trúc thư mục, ngôn ngữ lập trình, framework hoặc quy ước đặt tên.
+
+Phải khảo sát repository thực tế để xác định:
+
+- Các sản phẩm hiện có và cách tổ chức code.
+- Cách Product Code được sử dụng trong source code và cấu hình.
+- Các cơ chế đăng ký, routing, khởi tạo và dependency.
+- Các component dùng chung HTML.
+- Cách sản phẩm DC tổ chức các component riêng.
+- Quy trình build, test và validation hiện tại.
+
+Không tuyên bố đã khảo sát toàn repository nếu chưa có bằng chứng về phạm vi đã kiểm tra.
+
+### 4.2. Không thay thế Product Code một cách máy móc
+
+Phải tìm kiếm Source Product Code trên toàn repository và phân loại từng kết quả.
+
+Không được thay tất cả chuỗi trùng với Source Product Code bằng Target Product Code một cách tự động.
+
+Cần phân biệt:
+
+- Định danh sản phẩm.
+- Tên file, class, namespace hoặc component.
+- Cấu hình, registry và metadata.
+- Tham chiếu đến sản phẩm khác.
+- HTML và logic dùng chung.
+- Test, mock, fixture, tài liệu và dữ liệu mẫu.
+- Các thành phần không thuộc phạm vi cần thay đổi.
+
+Mỗi thay đổi phải có căn cứ rõ ràng.
+
+### 4.3. Tách biệt component không đồng nghĩa với sao chép toàn bộ code
+
+Mục tiêu là bảo đảm component thuộc phạm vi cần tách biệt có cấu trúc riêng cho sản phẩm đích.
+
+Không được mặc định phải sao chép toàn bộ service, thư viện, tiện ích hoặc các thành phần dùng chung.
+
+Cần phân biệt:
+
+- Component cần tách riêng.
+- Logic nghiệp vụ cần giữ nguyên.
+- Thành phần dùng chung có chủ đích.
+- Dependency cần thay đổi để loại bỏ việc chia sẻ HTML.
+- Thành phần không liên quan và phải giữ nguyên.
+
+Không chỉnh sửa HTML dùng chung theo cách làm thay đổi ngoài dự kiến các sản phẩm khác.
+
+### 4.4. Bảo toàn sản phẩm hiện hữu
+
+- Không ghi đè sản phẩm đã tồn tại.
+- Không sửa logic nghiệp vụ ngoài phạm vi yêu cầu.
+- Không refactor các sản phẩm khác chỉ để phục vụ Target Product Code.
+- Không thay đổi kiến trúc chung khi chưa có căn cứ.
+- Không xóa các dependency trước khi xác nhận không còn tham chiếu.
+- Không thực hiện thay đổi có rủi ro cao khi chưa có kế hoạch và sự xác nhận phù hợp.
+
+## 5. Workflow bắt buộc của Skill
+
+### Bước 1: Tiếp nhận đầu vào
 
 Nhận các thông tin:
 
 - Source Product Code.
 - Target Product Code.
-- Yêu cầu nghiệp vụ riêng của sản phẩm đích, nếu có.
+- Yêu cầu nghiệp vụ riêng, nếu có.
 
-Kiểm tra hai Product Code đã được cung cấp đầy đủ và hợp lệ theo quy ước thực tế của repository hay chưa.
+Xác thực đầu vào theo convention thực tế của repository. Nếu thiếu thông tin bắt buộc, hỏi lại người dùng.
 
-Không tự suy đoán Product Code còn thiếu. Nếu đầu vào chưa đủ, hỏi lại người dùng.
+### Bước 2: Xác định trạng thái sản phẩm đích
 
-### Bước 2: Khảo sát toàn repository
+Kiểm tra Target Product Code đã tồn tại hay chưa bằng cách khảo sát toàn repository, không chỉ kiểm tra tên thư mục.
 
-Tìm kiếm Source Product Code trên toàn bộ repository, không chỉ trong thư mục sản phẩm mà người dùng dự đoán.
+Xác định nhánh xử lý:
 
-Khảo sát cả những vị trí có thể chứa tham chiếu gián tiếp hoặc định danh liên quan, bao gồm:
+- Chưa tồn tại: đi theo workflow tạo sản phẩm mới.
+- Đã tồn tại: đi theo workflow chuẩn hóa và tách biệt component của sản phẩm hiện hữu.
+
+Nếu trạng thái không thể xác định chắc chắn, báo cáo phần chưa rõ và không tự ý triển khai.
+
+### Bước 3: Khảo sát toàn repository
+
+Tìm kiếm Source Product Code, Target Product Code và các định danh liên quan trong:
 
 - Source code.
-- File cấu hình và file môi trường.
-- Registry, danh sách đăng ký và metadata.
-- Routing, dependency injection và cơ chế khởi tạo.
-- File build, script và cấu hình triển khai.
-- Test, mock, fixture và dữ liệu mẫu.
-- Tài liệu kỹ thuật và các thành phần tích hợp khác.
+- Cấu hình.
+- Registry và metadata.
+- Routing và cơ chế khởi tạo.
+- Dependency và các thành phần dùng chung.
+- HTML, template, style và component.
+- Build script, test, mock, fixture và tài liệu.
+- Các khu vực tích hợp khác được phát hiện trong repository.
 
-Sử dụng công cụ tìm kiếm, đọc file và công cụ phân tích có sẵn trong môi trường Kiro.
+Ghi nhận các vị trí đã kiểm tra, kết quả tìm kiếm, các mối liên hệ phát hiện được và các khu vực chưa thể xác minh.
 
-Nếu repository có nhiều module, thư mục hoặc dự án con, phải xác định phạm vi khảo sát và bảo đảm không bỏ sót các khu vực liên quan.
+Không chỉ dựa vào kết quả tìm kiếm chuỗi để kết luận rằng đã hiểu đầy đủ cấu trúc sản phẩm.
 
-Ghi nhận:
+### Bước 4: Phân tích sản phẩm nguồn và DC
 
-- Những file đã kiểm tra.
-- Những vị trí có tham chiếu đến Source Product Code.
-- Những vị trí có liên quan đến sản phẩm nhưng không chứa Product Code trực tiếp.
-- Những khu vực chưa thể khảo sát và lý do.
+Phân tích sản phẩm nguồn để hiểu luồng nghiệp vụ, cách vận hành và dependency.
 
-Không được tuyên bố đã kiểm tra toàn repository nếu thực tế chưa hoàn thành việc khảo sát.
+Phân tích DC để hiểu cách tổ chức và tách biệt component.
 
-### Bước 3: Phân tích cấu trúc sản phẩm nguồn
+Lập bản đồ đối chiếu gồm:
 
-Đọc và phân tích các file cần thiết để hiểu một sản phẩm nguồn hoạt động như thế nào.
+- Các thành phần nghiệp vụ cần giữ hoặc kế thừa.
+- Các component hiện đang dùng chung HTML.
+- Các component cần tách riêng.
+- Các dependency cần giữ lại.
+- Các dependency cần thay đổi.
+- Các pattern tương ứng có thể tham khảo từ DC.
 
-Xác định:
+Không triển khai chỉ dựa trên tên file hoặc phỏng đoán về mục đích của component.
 
-- Các file và thành phần cấu thành sản phẩm.
-- Quan hệ giữa các thành phần.
-- Luồng khởi tạo và thực thi chính.
-- Những thành phần dùng chung.
-- Những thành phần đặc thù của sản phẩm.
-- Quy tắc đặt tên và tổ chức code.
-- Cách đăng ký, tích hợp và kiểm thử sản phẩm.
+### Bước 5: Lập kế hoạch theo trạng thái sản phẩm đích
 
-Tạo bản đồ phụ thuộc của sản phẩm nguồn ở mức đủ để triển khai sản phẩm đích an toàn.
+**Nếu sản phẩm đích chưa tồn tại:**
 
-Không chỉ sao chép danh sách file tìm được; phải hiểu vai trò của các file trong toàn bộ luồng xử lý.
+- Xác định cấu trúc sản phẩm mới theo sản phẩm nguồn.
+- Xác định các component cần tạo riêng theo pattern của DC.
+- Xác định các file đăng ký, cấu hình và dependency cần bổ sung.
+- Xác định các thành phần dùng chung có thể tái sử dụng.
 
-### Bước 4: Lập bản đồ chuyển đổi Source → Target
+**Nếu sản phẩm đích đã tồn tại:**
 
-Phân loại các vị trí và thành phần thành các nhóm:
+- Phân tích luồng nghiệp vụ hiện tại của sản phẩm đích.
+- Xác định các component và HTML đang được chia sẻ.
+- Xác định các component cần tách riêng mà không làm thay đổi nghiệp vụ.
+- Lập kế hoạch chuyển đổi dependency từ component dùng chung sang component riêng.
+- Xác định các điểm có nguy cơ làm thay đổi giao diện hoặc hành vi.
+- Xác định cách kiểm chứng tính tương đương trước và sau refactor.
 
-1. **Cần tạo mới:** thành phần phải tồn tại riêng cho sản phẩm đích.
-2. **Cần điều chỉnh:** thành phần được tái sử dụng nhưng cần cập nhật Product Code, tên hoặc cấu hình.
-3. **Dùng chung:** thành phần cần được tham chiếu lại, không sao chép.
-4. **Giữ nguyên:** thành phần thuộc sản phẩm nguồn hoặc không liên quan đến yêu cầu.
-5. **Cần xác nhận:** vị trí chưa đủ bằng chứng để quyết định.
+Với cả hai trường hợp, lập danh sách file sẽ tạo mới, file sẽ sửa đổi, file phải giữ nguyên và lý do cho từng nhóm.
 
-Với mỗi vị trí cần tạo mới hoặc điều chỉnh, giải thích ngắn gọn lý do.
+### Bước 6: Kiểm tra xung đột và rủi ro
 
-Phải xác định cách đặt tên, đường dẫn, cấu hình và đăng ký sản phẩm đích dựa trên pattern thực tế của sản phẩm nguồn và repository.
+Trước khi triển khai:
 
-### Bước 5: Kiểm tra xung đột và lập kế hoạch
+- Kiểm tra trùng Product Code, tên class, file, component và key cấu hình.
+- Kiểm tra các dependency dùng chung và phạm vi ảnh hưởng.
+- Xác định nguy cơ thay đổi hành vi của sản phẩm khác.
+- Xác định cách kiểm tra và rollback nếu cần.
+- Báo cáo các giả định hoặc vấn đề chưa rõ.
 
-Trước khi sửa code:
+Dừng và hỏi người dùng nếu có xung đột hoặc rủi ro chưa thể giải quyết an toàn.
 
-- Kiểm tra Target Product Code đã tồn tại hay chưa.
-- Kiểm tra tên file, class, namespace, key cấu hình và định danh dự kiến có bị trùng hay không.
-- Xác định các file sẽ được tạo mới và các file hiện hữu cần chỉnh sửa.
-- Đánh giá ảnh hưởng đến sản phẩm nguồn và các sản phẩm khác.
-- Xác định các test, lệnh build và cơ chế validation phù hợp.
+### Bước 7: Triển khai theo kế hoạch đã được chấp thuận
 
-Trình bày kế hoạch triển khai rõ ràng, có danh sách file dự kiến và lý do thay đổi.
+Chỉ triển khai sau khi hoàn thành phân tích và kế hoạch theo cơ chế phê duyệt phù hợp.
 
-Nếu có xung đột, thiếu thông tin quan trọng hoặc rủi ro chưa thể đánh giá, dừng và hỏi người dùng trước khi tiếp tục.
+Tuân thủ các nguyên tắc:
 
-### Bước 6: Triển khai sản phẩm đích
+- Sản phẩm mới kế thừa luồng nghiệp vụ từ sản phẩm nguồn.
+- Sản phẩm hiện hữu giữ luồng nghiệp vụ của chính nó.
+- Cả hai trường hợp đều áp dụng pattern tách biệt component của DC trong phạm vi cần thiết.
+- Không sao chép mù quáng.
+- Không sửa đổi ngoài phạm vi.
+- Nếu phát hiện sai khác so với kế hoạch, đánh giá lại trước khi thực hiện thay đổi ngoài dự kiến.
 
-Sau khi kế hoạch đã được xác nhận theo cơ chế phê duyệt phù hợp của Kiro:
+### Bước 8: Kiểm chứng sau triển khai
 
-- Tạo các thành phần cần thiết theo pattern của sản phẩm nguồn.
-- Cập nhật các định danh và Product Code phù hợp.
-- Tái sử dụng các thành phần dùng chung.
-- Bổ sung các đăng ký, cấu hình và dependency cần thiết.
-- Bổ sung hoặc cập nhật test theo convention của repository.
-- Chỉ sửa các file nằm trong phạm vi kế hoạch đã xác định.
+Kiểm tra:
 
-Không tự ý thay đổi kiến trúc hoặc mở rộng phạm vi công việc.
+- Tính đầy đủ của các component riêng.
+- Việc loại bỏ dependency dùng chung HTML trong phạm vi đã yêu cầu.
+- Tính nhất quán của Product Code, đăng ký và cấu hình.
+- Các tham chiếu còn sót đến component cũ.
+- Ảnh hưởng đến sản phẩm nguồn và các sản phẩm khác.
+- Test, build và validation phù hợp.
+- Diff thực tế so với phạm vi kế hoạch.
 
-Nếu trong quá trình triển khai phát hiện cấu trúc thực tế khác với phân tích ban đầu, phải đánh giá lại kế hoạch trước khi thực hiện những thay đổi ngoài dự kiến.
+Đối với sản phẩm hiện hữu, ưu tiên kiểm chứng rằng luồng nghiệp vụ và hành vi hiện tại được bảo toàn.
 
-### Bước 7: Kiểm chứng sau triển khai
+Không tuyên bố test hoặc build thành công nếu chưa thực sự chạy và nhận được kết quả.
 
-Thực hiện các kiểm tra phù hợp với repository, bao gồm:
+### Bước 9: Báo cáo kết quả
 
-- Kiểm tra tính đầy đủ của các thành phần sản phẩm đích.
-- Kiểm tra Product Code, tên, cấu hình và đăng ký.
-- Kiểm tra dependency và các tham chiếu nội bộ.
-- Tìm kiếm lại Source Product Code để phát hiện tham chiếu cũ bị bỏ sót trong phạm vi sản phẩm đích.
-- Xác minh không vô tình thay đổi hoặc xóa sản phẩm nguồn.
-- Chạy test, build hoặc validation phù hợp khi môi trường cho phép.
-- Kiểm tra diff để phát hiện thay đổi ngoài phạm vi.
-
-Không được tuyên bố build hoặc test thành công nếu chưa thực sự chạy và nhận được kết quả tương ứng.
-
-Nếu có kiểm tra không thể thực hiện, ghi rõ lý do và mức độ rủi ro còn lại.
-
-### Bước 8: Báo cáo kết quả
-
-Báo cáo cần có:
+Báo cáo phải thể hiện:
 
 - Source Product Code và Target Product Code.
-- Tóm tắt cấu trúc và pattern đã tái sử dụng.
-- Danh sách file được tạo mới.
-- Danh sách file đã chỉnh sửa và lý do.
-- Các vị trí Product Code đã xử lý.
-- Các thành phần dùng chung được tái sử dụng.
+- Trạng thái sản phẩm đích trước khi thực hiện.
+- Luồng nghiệp vụ được kế thừa hoặc bảo toàn.
+- Pattern tách biệt component tham khảo từ DC.
+- Các component đã được tách riêng.
+- Các dependency dùng chung vẫn được giữ lại và lý do.
+- Danh sách file tạo mới và chỉnh sửa.
 - Kết quả test, build và validation.
-- Các giả định, vấn đề chưa giải quyết và rủi ro còn lại.
+- Các vấn đề chưa giải quyết và rủi ro còn lại.
 
-Phân biệt rõ giữa việc đã thực hiện, đã kiểm chứng và chưa thể xác minh.
+Phân biệt rõ kết quả đã thực hiện, kết quả đã kiểm chứng và các kết luận chưa có đủ bằng chứng.
 
-## 5. Yêu cầu thiết kế cấu trúc Skill
+## 6. Yêu cầu cấu trúc Skill
 
-Trước tiên, khảo sát cơ chế Kiro Skill và cấu trúc quy tắc hiện có trong repository để chọn vị trí lưu phù hợp.
+Trước tiên, khảo sát cấu trúc Kiro hiện có trong repository và cơ chế Skill đang được sử dụng.
 
-Không tự giả định repository đã có hoặc chưa có skill, steering file, agent hay prompt nào.
+Đề xuất một skill chính có trách nhiệm điều phối workflow, có thể tham chiếu đến tài liệu hướng dẫn con khi thực sự cần thiết, chẳng hạn:
 
-Thiết kế theo hướng:
+- Khảo sát repository và tìm Product Code.
+- Phân tích sản phẩm nguồn và sản phẩm DC.
+- Lập bản đồ tách biệt component.
+- Chuẩn hóa sản phẩm hiện hữu.
+- Kiểm chứng và báo cáo kết quả.
 
-- Một skill chính chịu trách nhiệm điều phối toàn bộ quy trình tạo sản phẩm.
-- Các tài liệu hướng dẫn con chỉ được tách ra khi có lợi ích rõ ràng, ví dụ khảo sát repository, phân tích sản phẩm nguồn, mapping Product Code và kiểm chứng sau triển khai.
-- Tài liệu hướng dẫn con phải có ranh giới trách nhiệm rõ ràng, tránh trùng lặp và tránh phân mảnh workflow không cần thiết.
-- Các nguyên tắc quan trọng về an toàn, bảo toàn sản phẩm nguồn và kiểm soát phạm vi phải được giữ nhất quán.
-- Tài liệu phải đủ ngắn gọn để dễ bảo trì nhưng đủ cụ thể để Kiro thực hiện công việc có thể kiểm chứng.
-- Không tạo thêm agent hoặc cơ chế orchestration phức tạp nếu skill và các hướng dẫn đi kèm đã đáp ứng được yêu cầu.
+Không bắt buộc phải tách các bước thành nhiều file nếu một skill chính có thể xử lý rõ ràng và hiệu quả.
 
-Ưu tiên một workflow xuyên suốt, trong đó mỗi bước tạo ra kết quả làm đầu vào cho bước kế tiếp.
+Không tạo agent, prompt hoặc cơ chế orchestration bổ sung nếu không có lợi ích cụ thể.
 
-## 6. Yêu cầu đầu ra ở giai đoạn thiết kế
+Tuân thủ cơ chế Kiro Skill và convention hiện có của repository; không tự giả định cấu trúc file hoặc phiên bản định dạng.
 
-Trước khi tạo hoặc chỉnh sửa bất kỳ tài liệu nào, hãy trình bày:
+## 7. Yêu cầu đầu ra ở giai đoạn thiết kế
 
-1. Đánh giá repository và cơ chế Kiro Skill hiện có.
-2. Đề xuất tên, mục đích và phạm vi của skill.
-3. Workflow chi tiết từ đầu vào đến báo cáo kết quả.
-4. Cấu trúc thư mục và danh sách file cần tạo hoặc cập nhật.
-5. Trách nhiệm của từng file.
-6. Cách bảo đảm khảo sát toàn repository và tránh bỏ sót Product Code.
-7. Cách xử lý xung đột, trường hợp thiếu thông tin và rủi ro ảnh hưởng sản phẩm hiện hữu.
-8. Cách kiểm chứng kết quả.
+Trước khi tạo hoặc chỉnh sửa bất kỳ file nào, hãy trình bày:
 
-Chỉ sau khi hoàn thành đề xuất thiết kế, mới chuyển sang tạo các file của skill theo yêu cầu tiếp theo của người dùng.
+1. Kết quả khảo sát repository và cấu trúc Kiro hiện có.
+2. Đề xuất tên và phạm vi của skill.
+3. Workflow cho cả hai trường hợp Target Product Code mới và đã tồn tại.
+4. Cách sử dụng sản phẩm nguồn và DC làm hai nguồn tham chiếu với trách nhiệm khác nhau.
+5. Cấu trúc thư mục và danh sách file dự kiến tạo hoặc chỉnh sửa.
+6. Cách bảo đảm không bỏ sót Product Code hoặc dependency.
+7. Cách tách biệt component mà vẫn bảo toàn luồng nghiệp vụ.
+8. Cách xử lý xung đột, rủi ro và trường hợp thiếu thông tin.
+9. Kế hoạch kiểm chứng sau triển khai.
+10. Các giả định và giới hạn còn tồn tại.
 
-## 7. Tiêu chí đánh giá chất lượng
+Chỉ sau khi hoàn thành đề xuất thiết kế mới chuyển sang tạo file skill khi được yêu cầu.
 
-Skill được coi là thiết kế tốt khi đáp ứng các điều kiện:
+## 8. Tiêu chí đánh giá chất lượng
 
-- Có thể dùng lại cho nhiều cặp Source/Target Product Code.
+Skill được coi là đạt yêu cầu khi:
+
+- Hoạt động với nhiều cặp Source/Target Product Code.
 - Không phụ thuộc vào vị trí Product Code được giả định trước.
-- Không bỏ qua bước phân tích cấu trúc và dependency của sản phẩm nguồn.
-- Không thực hiện thay thế chuỗi một cách máy móc.
-- Không tạo bản sao không cần thiết của các thành phần dùng chung.
-- Không ghi đè hoặc vô tình thay đổi sản phẩm hiện hữu.
-- Có kế hoạch triển khai rõ ràng và có thể kiểm tra.
-- Có bằng chứng kiểm chứng sau triển khai.
-- Có báo cáo rõ ràng về thay đổi và các giới hạn chưa được xác minh.
+- Phân biệt chính xác sản phẩm đích mới và sản phẩm đã tồn tại.
+- Sử dụng sản phẩm nguồn để tham chiếu luồng nghiệp vụ khi tạo sản phẩm mới.
+- Bảo toàn luồng nghiệp vụ của sản phẩm đích khi chuẩn hóa sản phẩm hiện hữu.
+- Sử dụng DC làm chuẩn tham chiếu cho cách tách biệt component.
+- Không bỏ sót dependency và đăng ký liên quan.
+- Không sao chép mù quáng hoặc thay thế chuỗi một cách máy móc.
+- Không gây thay đổi ngoài phạm vi đối với các sản phẩm khác.
+- Có kế hoạch, bằng chứng và kết quả kiểm chứng rõ ràng.
 
-Hãy bắt đầu bằng việc khảo sát repository và thiết kế workflow. Không triển khai một sản phẩm WN cụ thể trong nhiệm vụ này.
+Hãy bắt đầu bằng việc khảo sát repository và thiết kế workflow. Không triển khai sản phẩm WN cụ thể trong nhiệm vụ này.
