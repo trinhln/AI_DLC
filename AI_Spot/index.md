@@ -1,9 +1,11 @@
+Brief Description – AI CodeGuard
+
 Giải pháp ứng dụng AI để tự động hóa quy trình Code Review, phân tích và đánh giá chất lượng mã nguồn dựa trên coding conventions của dự án, phát hiện các lỗi tiềm ẩn, code smells và đưa ra đề xuất cải thiện cụ thể. Đồng thời, hệ thống cung cấp thang điểm đánh giá chuẩn hóa, giúp nâng cao chất lượng code và tính nhất quán trong quá trình phát triển phần mềm.
 
 ====================
+Beneficiary:
 
 Với initiative AI CodeGuard, mục Beneficiary (Đối tượng hưởng lợi) có thể trình bày như sau:
-Beneficiary
 
 1. Developers: Giảm thời gian tự review code, nhanh chóng phát hiện lỗi và nhận được đề xuất cải thiện chất lượng mã nguồn.
 2. Technical Leads / Code Reviewers: Giảm tải công việc review thủ công, chuẩn hóa tiêu chí đánh giá và nâng cao hiệu quả kiểm soát chất lượng code.
@@ -15,6 +17,8 @@ Beneficiary
 
 ====================
 
+What makes this Incremental Impact?
+
 AI CodeGuard tạo ra giá trị gia tăng bằng cách chuyển đổi quy trình Code Review từ hoạt động thủ công, phụ thuộc nhiều vào kinh nghiệm cá nhân sang quy trình được hỗ trợ bởi AI, có tính tự động hóa và tiêu chuẩn hóa.
 
 Giải pháp giúp:
@@ -25,3 +29,19 @@ Giải pháp giúp:
 - Tăng năng suất: Cung cấp phản hồi và đề xuất cải thiện nhanh chóng, giúp rút ngắn vòng lặp review và sửa lỗi.
 - Khả năng mở rộng: Tận dụng AI để hỗ trợ hoạt động review trên nhiều dự án mà không cần tăng tương ứng nguồn lực reviewer.
   Điểm tạo ra Incremental Impact: Không chỉ tự động hóa một phần công việc review, AI CodeGuard còn giúp đưa các quy chuẩn và kinh nghiệm kỹ thuật của dự án vào quy trình đánh giá tự động, từ đó cải thiện chất lượng code một cách nhất quán và bền vững.
+
+====================
+
+Measurable Results & Impact:
+
+AI CodeGuard hướng đến việc cải thiện năng suất phát triển phần mềm và chất lượng mã nguồn thông qua việc ứng dụng AI vào quy trình Code Review.
+
+Các kết quả kỳ vọng bao gồm:
+
+- **Giảm 30–50% thời gian Code Review:** Tự động hóa các hoạt động kiểm tra lặp lại, giúp Developer và Reviewer tập trung vào các vấn đề kỹ thuật phức tạp hơn.
+- **Phát hiện vấn đề sớm hơn:** Chủ động nhận diện các lỗi tiềm ẩn, Code Smells và những điểm không tuân thủ Coding Convention ngay trong quá trình phát triển.
+- **Nâng cao chất lượng mã nguồn:** Áp dụng thống nhất các tiêu chuẩn lập trình của dự án, đồng thời cung cấp những đề xuất cải thiện cụ thể và có tính thực tiễn.
+- **Tăng năng suất Developer:** Giảm thời gian dành cho việc tự kiểm tra và xử lý các phản hồi review, rút ngắn vòng lặp phát triển.
+- **Chuẩn hóa hoạt động Code Review:** Giảm sự phụ thuộc vào kinh nghiệm cá nhân của từng Reviewer, hướng đến quy trình đánh giá nhất quán hơn.
+
+Hiệu quả của sáng kiến sẽ được đo lường thông qua các chỉ số: thời gian review trung bình, số lượng vấn đề được phát hiện, thời gian phản hồi review và tổng thời gian nhân lực tiết kiệm được so với quy trình review thủ công hiện tại.
