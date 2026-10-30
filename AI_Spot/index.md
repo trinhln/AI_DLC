@@ -45,3 +45,17 @@ Các kết quả kỳ vọng bao gồm:
 - **Chuẩn hóa hoạt động Code Review:** Giảm sự phụ thuộc vào kinh nghiệm cá nhân của từng Reviewer, hướng đến quy trình đánh giá nhất quán hơn.
 
 Hiệu quả của sáng kiến sẽ được đo lường thông qua các chỉ số: thời gian review trung bình, số lượng vấn đề được phát hiện, thời gian phản hồi review và tổng thời gian nhân lực tiết kiệm được so với quy trình review thủ công hiện tại.
+
+====================
+
+AI CodeGuard có tiềm năng mở rộng và áp dụng trên nhiều đội ngũ phát triển, dự án và đơn vị kinh doanh khác nhau nhờ khả năng tùy biến theo đặc thù của từng dự án.
+
+Khả năng nhân rộng được thực hiện thông qua:
+
+- **Tái sử dụng giải pháp:** Có thể triển khai cùng một mô hình Code Review cho nhiều dự án mà không cần xây dựng lại từ đầu.
+- **Tùy chỉnh theo dự án:** Tích hợp Coding Convention, quy chuẩn kỹ thuật và tiêu chí đánh giá riêng của từng dự án thông qua cơ chế cấu hình và hướng dẫn cho AI.
+- **Hỗ trợ nhiều đội ngũ:** Có thể áp dụng cho các nhóm phát triển sử dụng công nghệ và kiến trúc khác nhau bằng cách bổ sung các quy tắc review tương ứng.
+- **Tích hợp vào quy trình hiện tại:** Có thể sử dụng trong quá trình phát triển local hoặc review Pull Request, hạn chế thay đổi workflow hiện có của Developer.
+- **Mở rộng linh hoạt:** Khi triển khai trên nhiều dự án, các quy tắc và kinh nghiệm review có thể tiếp tục được chuẩn hóa, cải thiện và tái sử dụng.
+
+Nhờ đó, AI CodeGuard có thể phát triển từ một giải pháp hỗ trợ Code Review cho một dự án thành một công cụ dùng chung, góp phần chuẩn hóa chất lượng mã nguồn và nâng cao năng suất phát triển phần mềm trên toàn tổ chức.
