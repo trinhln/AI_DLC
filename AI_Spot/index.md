@@ -1,0 +1,1 @@
+Giải pháp ứng dụng AI để tự động hóa quy trình Code Review, phân tích và đánh giá chất lượng mã nguồn dựa trên coding conventions của dự án, phát hiện các lỗi tiềm ẩn, code smells và đưa ra đề xuất cải thiện cụ thể. Đồng thời, hệ thống cung cấp thang điểm đánh giá chuẩn hóa, giúp nâng cao chất lượng code và tính nhất quán trong quá trình phát triển phần mềm.
